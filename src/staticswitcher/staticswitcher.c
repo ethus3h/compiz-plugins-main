@@ -833,9 +833,8 @@ switchTerminate (CompDisplay     *d,
 
 	    ss->switching = FALSE;
 	}
+	damageScreen (s);
     }
-
-    damageScreen (s);
 
     if (action)
 	action->state &= ~(CompActionStateTermKey | CompActionStateTermButton);
