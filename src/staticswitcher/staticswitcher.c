@@ -27,11 +27,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
 #include <X11/Xatom.h>
 
 #include <compiz-core.h>
+#include <compiz-text.h>
 #include <decoration.h>
 #include "staticswitcher_options.h"
 
@@ -806,6 +808,8 @@ switchTerminate (CompDisplay     *d,
         waited = 0;
         while ( (!ss->selectedWindow->id == (int) d->activeWindow) && (waited < 300) )
         {
+            compLogMessage ("staticswitcher", CompLogLevelWarn,
+        			"Window wasn't ready in time");
             nanosleep (&tim, &tim2);
             waited = waited+1;
         }
