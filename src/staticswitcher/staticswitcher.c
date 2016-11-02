@@ -1132,7 +1132,7 @@ static void
 staticswitcherFreeWindowTitle (CompScreen *s)
 {
     SWITCH_SCREEN (s);
-    SHIFT_DISPLAY (s->display);
+    SWITCH_DISPLAY (s->display);
 
     if (!ss->textData)
 	return;
@@ -1148,7 +1148,7 @@ staticswitcherRenderWindowTitle (CompScreen *s)
     int            ox1, ox2, oy1, oy2;
 
     SWITCH_SCREEN (s);
-    SHIFT_DISPLAY (s->display);
+    SWITCH_DISPLAY (s->display);
 
     staticswitcherFreeWindowTitle (s);
 
@@ -1204,7 +1204,7 @@ staticswitcherDrawWindowTitle (CompScreen *s)
     int ox1, ox2, oy1, oy2;
 
     SWITCH_SCREEN (s);
-    SHIFT_DISPLAY (s->display);
+    SWITCH_DISPLAY (s->display);
 
     width = ss->textData->width;
     height = ss->textData->height;
