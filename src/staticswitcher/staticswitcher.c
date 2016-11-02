@@ -794,9 +794,6 @@ switchTerminate (CompDisplay     *d,
 		addWindowDamage(w);
 	    }
 
-	    UNWRAP (ss, s, paintOutput);
-	    WRAP (ss, s, paintOutput, switchPaintOutput);
-
     	if (zoomed)
     	{
     	    unhookWindowFromScreen (s, zoomed);
