@@ -1131,7 +1131,7 @@ switchWindowRemove (CompDisplay *d,
 static void
 staticswitcherFreeWindowTitle (CompScreen *s)
 {
-    SHIFT_SCREEN (s);
+    SWITCH_SCREEN (s);
     SHIFT_DISPLAY (s->display);
 
     if (!ss->textData)
@@ -1147,7 +1147,7 @@ staticswitcherRenderWindowTitle (CompScreen *s)
     CompTextAttrib tA;
     int            ox1, ox2, oy1, oy2;
 
-    SHIFT_SCREEN (s);
+    SWITCH_SCREEN (s);
     SHIFT_DISPLAY (s->display);
 
     staticswitcherFreeWindowTitle (s);
@@ -1203,7 +1203,7 @@ staticswitcherDrawWindowTitle (CompScreen *s)
     float width, height, border = 10.0f;
     int ox1, ox2, oy1, oy2;
 
-    SHIFT_SCREEN (s);
+    SWITCH_SCREEN (s);
     SHIFT_DISPLAY (s->display);
 
     width = ss->textData->width;
