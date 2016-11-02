@@ -794,13 +794,13 @@ switchTerminate (CompDisplay     *d,
 
 	    ss->mouseSelect = mouseSelect;
         
-        //Windows don't activate immediately, so wait up to a tenth of a second for it to get ready
+        //In case the window didn't activate soon enough, wait up to a tenth of a second for it to get ready
         struct timespec tim, tim2;
         tim.tv_sec = 0;
         tim.tv_nsec = 10000000L;
         int waited;
         waited = 0;
-        while ( (!ss->selectedWindow->id == (int) activeWindow) && (waited < 10) )
+        while ( (!ss->selectedWindow->id == (int) d->activeWindow) && (waited < 10) )
         {
             nanosleep (&tim, &tim2);
             waited = waited+1;
