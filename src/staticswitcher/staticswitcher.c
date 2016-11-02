@@ -778,7 +778,32 @@ switchTerminate (CompDisplay     *d,
 
 	if (ss->grabIndex)
 	{
-        removeScreenGrab (s, ss->grabIndex, 0);
+	    zoomed = ss->selectedWindow;
+	    if (zoomed && !zoomed->destroyed)
+	    {
+		CompWindow *w;
+
+		for (w = zoomed->prev; w && w->id <= 1; w = w->prev)
+		    ;
+		zoomedAbove = (w) ? w->id : None;
+
+		unhookWindowFromScreen (s, zoomed);
+		insertWindowIntoScreen (s, zoomed, s->reverseWindows->id);
+		addWindowDamage(w);
+	    }
+
+	    UNWRAP (ss, s, paintOutput);
+	    status = (*s->paintOutput) (s, sAttrib, transform,
+					    region, output, mask);
+	    WRAP (ss, s, paintOutput, switchPaintOutput);
+
+	    if (zoomed)
+	    {
+	        unhookWindowFromScreen (s, zoomed);
+	        insertWindowIntoScreen (s, zoomed, zoomedAbove);
+	    }
+
+	    removeScreenGrab (s, ss->grabIndex, 0);
 	    ss->grabIndex = 0;
 	    sendWindowActivationRequest (s, ss->selectedWindow->id);
 	    damageScreen (s);
