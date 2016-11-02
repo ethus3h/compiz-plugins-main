@@ -780,25 +780,14 @@ switchTerminate (CompDisplay     *d,
 	{
 	    CompWindow *w;
 
+	    d->activeWindow = sd->lastActiveWindow;
+
 	    removeScreenGrab (s, ss->grabIndex, 0);
 	    ss->grabIndex = 0;
 
+	    if (state && !(state & CompActionStateCancel))
 		if (ss->selectedWindow && !ss->selectedWindow->destroyed)
-			sendWindowActivationRequest (s, ss->selectedWindow->id);
-
-	    Bool mouseSelect;
-	    mouseSelect = staticswitcherGetMouseSelect (s) &&
-						ss->selection != Panels;
-
-	    if (!ss->grabIndex)
-		    ss->grabIndex = pushScreenGrab (s, switchGetCursor (s, mouseSelect),
-						"switcher");
-	    else if (mouseSelect != ss->mouseSelect)
-		    updateScreenGrab (s, ss->grabIndex, switchGetCursor (s, mouseSelect));
-
-	    ss->mouseSelect = mouseSelect;
-
-        d->activeWindow = sd->lastActiveWindow;
+		    sendWindowActivationRequest (s, ss->selectedWindow->id);
 
 	    ss->selectedWindow = NULL;
 
@@ -832,8 +821,8 @@ switchTerminate (CompDisplay     *d,
 	    }
 
 	    ss->switching = FALSE;
+	    damageScreen (s);
 	}
-	damageScreen (s);
     }
 
     if (action)
