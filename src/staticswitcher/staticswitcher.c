@@ -2187,6 +2187,17 @@ switchInitDisplay (CompPlugin  *p,
 	sd->textFunc = NULL;
     }
 
+    sd = malloc (sizeof (SwitchDisplay));
+    if (!sd)
+	return FALSE;
+
+    sd->screenPrivateIndex = allocateScreenPrivateIndex (d);
+    if (sd->screenPrivateIndex < 0)
+    {
+	free (sd);
+	return FALSE;
+    }
+
     staticswitcherSetNextButtonInitiate (d, switchNext);
     staticswitcherSetNextButtonTerminate (d, switchTerminate);
     staticswitcherSetNextKeyInitiate (d, switchNext);
