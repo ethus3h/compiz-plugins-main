@@ -45,6 +45,8 @@ typedef struct _SwitchDisplay {
 
     Atom selectWinAtom;
     Atom selectFgColorAtom;
+
+    TextFunc *textFunc;
 } SwitchDisplay;
 
 typedef enum {
@@ -68,6 +70,8 @@ typedef struct _SwitchScreen {
     CompWindow *selectedWindow;
 
     Window clientLeader;
+
+    CompTextData *textData;
 
     unsigned int previewWidth;
     unsigned int previewHeight;
@@ -796,7 +800,7 @@ switchTerminate (CompDisplay     *d,
         
         //In case the window didn't activate soon enough, wait up to 3/10 of a second for it to get ready
         struct timespec tim, tim2;
-        tim.tv_sec = 0;
+        tim.tv_sec = 1;
         tim.tv_nsec = 10000000L;
         int waited;
         waited = 0;
@@ -1121,6 +1125,130 @@ switchWindowRemove (CompDisplay *d,
 }
 
 static void
+staticswitcherFreeWindowTitle (CompScreen *s)
+{
+    SHIFT_SCREEN (s);
+    SHIFT_DISPLAY (s->display);
+
+    if (!ss->textData)
+	return;
+
+    (sd->textFunc->finiTextData) (s, ss->textData);
+    ss->textData = NULL;
+}
+
+static void 
+staticswitcherRenderWindowTitle (CompScreen *s)
+{
+    CompTextAttrib tA;
+    int            ox1, ox2, oy1, oy2;
+
+    SHIFT_SCREEN (s);
+    SHIFT_DISPLAY (s->display);
+
+    staticswitcherFreeWindowTitle (s);
+
+    if (!sd->textFunc)
+	return;
+
+    if (!staticswitcherGetWindowTitle (s))
+	return;
+
+    if (staticswitcherGetMultioutputMode (s) == MultioutputModeOneBigSwitcher)
+    {
+	ox1 = oy1 = 0;
+	ox2 = s->width;
+	oy2 = s->height;
+    }
+    else
+	getCurrentOutputExtents (s, &ox1, &oy1, &ox2, &oy2);
+
+    /* 75% of the output device as maximum width */
+    tA.maxWidth = (ox2 - ox1) * 3 / 4;
+    tA.maxHeight = 100;
+
+    tA.family = staticswitcherGetTitleFontFamily(s);
+    tA.size = staticswitcherGetTitleFontSize (s);
+    tA.color[0] = staticswitcherGetTitleFontColorRed (s);
+    tA.color[1] = staticswitcherGetTitleFontColorGreen (s);
+    tA.color[2] = staticswitcherGetTitleFontColorBlue (s);
+    tA.color[3] = staticswitcherGetTitleFontColorAlpha (s);
+
+    tA.flags = CompTextFlagWithBackground | CompTextFlagEllipsized;
+    if (staticswitcherGetTitleFontBold (s))
+	tA.flags |= CompTextFlagStyleBold;
+
+    tA.bgHMargin = 15;
+    tA.bgVMargin = 15;
+    tA.bgColor[0] = staticswitcherGetTitleBackColorRed (s);
+    tA.bgColor[1] = staticswitcherGetTitleBackColorGreen (s);
+    tA.bgColor[2] = staticswitcherGetTitleBackColorBlue (s);
+    tA.bgColor[3] = staticswitcherGetTitleBackColorAlpha (s);
+
+    ss->textData = (sd->textFunc->renderWindowTitle) (s,
+						      (ss->selectedWindow ?
+						       ss->selectedWindow->id :
+						       None),
+						      ss->type == ShiftTypeAll,
+						      &tA);
+}
+
+static void
+staticswitcherDrawWindowTitle (CompScreen *s)
+{
+    float width, height, border = 10.0f;
+    int ox1, ox2, oy1, oy2;
+
+    SHIFT_SCREEN (s);
+    SHIFT_DISPLAY (s->display);
+
+    width = ss->textData->width;
+    height = ss->textData->height;
+
+    if (staticswitcherGetMultioutputMode (s) == MultioutputModeOneBigSwitcher)
+    {
+	ox1 = oy1 = 0;
+	ox2 = s->width;
+	oy2 = s->height;
+    }
+    else
+    {
+        ox1 = s->outputDev[ss->usedOutput].region.extents.x1;
+        ox2 = s->outputDev[ss->usedOutput].region.extents.x2;
+        oy1 = s->outputDev[ss->usedOutput].region.extents.y1;
+        oy2 = s->outputDev[ss->usedOutput].region.extents.y2;
+    }
+
+    float x = ox1 + ((ox2 - ox1) / 2) - ((int)ss->textData->width / 2);
+    float y;
+
+    /* assign y (for the lower corner!) according to the setting */
+    switch (staticswitcherGetTitleTextPlacement (s))
+    {
+    case TitleTextPlacementCenteredOnScreen:
+	y = oy1 + ((oy2 - oy1) / 2) + (height / 2);
+	break;
+    case TitleTextPlacementAbove:
+    case TitleTextPlacementBelow:
+	{
+	    XRectangle workArea;
+	    getWorkareaForOutput (s, s->currentOutputDev, &workArea);
+
+	    if (staticswitcherGetTitleTextPlacement (s) ==
+		TitleTextPlacementAbove)
+		y = oy1 + workArea.y + (2 * border) + height;
+	    else
+		y = oy1 + workArea.y + workArea.height - (2 * border);
+	}
+	break;
+    default:
+	return;
+    }
+
+    (sd->textFunc->drawText) (s, ss->textData, floor (x), floor (y), 1.0f);
+}
+
+static void
 updateForegroundColor (CompScreen *s)
 {
     Atom	  actual;
@@ -1255,6 +1383,7 @@ switchHandleEvent (CompDisplay *d,
 
     SWITCH_DISPLAY (d);
 
+    staticswitcherRenderWindowTitle (s);
     switch (event->type) {
     case MapNotify:
 	w = findWindowAtDisplay (d, event->xmap.window);
@@ -1458,6 +1587,9 @@ switchPaintOutput (CompScreen		   *s,
 
     SWITCH_SCREEN (s);
 
+    if (ss->textData)
+	    staticswitcherDrawWindowTitle (s);
+
     if (ss->grabIndex)
     {
 	StaticswitcherHighlightModeEnum mode;
@@ -1589,6 +1721,8 @@ switchPaintOutput (CompScreen		   *s,
 		    }
 		}
 	    }
+
+	    staticswitcherRenderWindowTitle (s);
 
 	    if (switcher)
 	    {
@@ -2052,6 +2186,18 @@ switchInitDisplay (CompPlugin  *p,
     if (!checkPluginABI ("core", CORE_ABIVERSION))
 	return FALSE;
 
+    if (checkPluginABI ("text", TEXT_ABIVERSION) &&
+	getPluginDisplayIndex (d, "text", &index))
+    {
+	sd->textFunc = d->base.privates[index].ptr;
+    }
+    else
+    {
+	compLogMessage ("staticswitcher", CompLogLevelWarn,
+			"No compatible text plugin loaded.");
+	sd->textFunc = NULL;
+    }
+
     sd = malloc (sizeof (SwitchDisplay));
     if (!sd)
 	return FALSE;
@@ -2202,6 +2348,8 @@ switchFiniScreen (CompPlugin *p,
 
     if (ss->popupWindow)
 	XDestroyWindow (s->display->display, ss->popupWindow);
+
+    staticswitcherFreeWindowTitle (s);
 
     if (ss->windows)
 	free (ss->windows);
