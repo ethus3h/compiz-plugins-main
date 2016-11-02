@@ -2170,26 +2170,15 @@ switchInitDisplay (CompPlugin  *p,
 		   CompDisplay *d)
 {
     SwitchDisplay *sd;
-    int SwitchDisplayPrivateIndex;
-
-    sd = malloc (sizeof (SwitchDisplay));
-    if (!sd)
-	return FALSE;
-
-    sd->screenPrivateIndex = allocateScreenPrivateIndex (d);
-    if (sd->screenPrivateIndex < 0)
-    {
-	free (sd);
-	return FALSE;
-    }
+    int index;
 
     if (!checkPluginABI ("core", CORE_ABIVERSION))
 	return FALSE;
 
     if (checkPluginABI ("text", TEXT_ABIVERSION) &&
-	getPluginDisplayIndex (d, "text", &SwitchDisplayPrivateIndex))
+	getPluginDisplayIndex (d, "text", &index))
     {
-	sd->textFunc = d->base.privates[SwitchDisplayPrivateIndex].ptr;
+	sd->textFunc = d->base.privates[index].ptr;
     }
     else
     {
