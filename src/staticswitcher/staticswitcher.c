@@ -2170,6 +2170,7 @@ switchInitDisplay (CompPlugin  *p,
 		   CompDisplay *d)
 {
     SwitchDisplay *sd;
+    int SwitchDisplayPrivateIndex;
 
     if (!checkPluginABI ("core", CORE_ABIVERSION))
 	return FALSE;
