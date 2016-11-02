@@ -2170,15 +2170,14 @@ switchInitDisplay (CompPlugin  *p,
 		   CompDisplay *d)
 {
     SwitchDisplay *sd;
-    int index;
 
     if (!checkPluginABI ("core", CORE_ABIVERSION))
 	return FALSE;
 
     if (checkPluginABI ("text", TEXT_ABIVERSION) &&
-	getPluginDisplayIndex (d, "text", &index))
+	getPluginDisplayIndex (d, "text", &SwitchDisplayPrivateIndex))
     {
-	sd->textFunc = d->base.privates[index].ptr;
+	sd->textFunc = d->base.privates[SwitchDisplayPrivateIndex].ptr;
     }
     else
     {
