@@ -778,6 +778,8 @@ switchTerminate (CompDisplay     *d,
 
 	if (ss->grabIndex)
 	{
+		CompWindow                      *switcher, *zoomed;
+		Window	                        zoomedAbove = None;
 	    zoomed = ss->selectedWindow;
 	    if (zoomed && !zoomed->destroyed)
 	    {
@@ -793,15 +795,13 @@ switchTerminate (CompDisplay     *d,
 	    }
 
 	    UNWRAP (ss, s, paintOutput);
-	    status = (*s->paintOutput) (s, sAttrib, transform,
-					    region, output, mask);
 	    WRAP (ss, s, paintOutput, switchPaintOutput);
 
-	    if (zoomed)
-	    {
-	        unhookWindowFromScreen (s, zoomed);
-	        insertWindowIntoScreen (s, zoomed, zoomedAbove);
-	    }
+    	if (zoomed)
+    	{
+    	    unhookWindowFromScreen (s, zoomed);
+    	    insertWindowIntoScreen (s, zoomed, zoomedAbove);
+    	}
 
 	    removeScreenGrab (s, ss->grabIndex, 0);
 	    ss->grabIndex = 0;
