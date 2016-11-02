@@ -176,9 +176,9 @@
 		    <_long>Close window on clicking its preview in the popup with the middle button</_long>
 		    <default>false</default>
 		</option>
-		<option name="highlight_focuses" type="bool">
-		    <_short>Focus Highlighted Window</_short>
-		    <_long>When enabled, the highlighted window has focus.</_long>
+		<option name="highlight_activates" type="bool">
+		    <_short>Activate Highlighted Window</_short>
+		    <_long>When enabled, the highlighted window is activated.</_long>
 		    <default>false</default>
 		</option>
 		<option name="nondestructive" type="bool">
@@ -333,6 +333,71 @@
 		    <default>48</default>
 		    <min>0</min>
 		</option>
+	    </group>
+	    <group>
+			<_short>Window title display</_short>
+			<option name="window_title" type="bool">
+				<_short>Show Window Title</_short>
+				<_long>Show window title of currently selected window.</_long>
+				<default>true</default>
+			</option>
+			<option type="string" name="title_font_family">
+				<_short>Font family</_short>
+				<_long>Name of the font to display title.</_long>
+				<hints>family;</hints>
+				<default>Sans</default>
+			</option>
+			<option name="title_font_bold" type="bool">
+				<_short>Bold Font</_short>
+				<_long>Selects if the window title should be displayed in bold font or not.</_long>
+				<default>false</default>
+			</option>
+			<option name="title_font_size" type="int">
+				<_short>Font Size</_short>
+				<_long>Font size for the window title</_long>
+				<default>16</default>
+				<min>6</min>
+				<max>96</max>
+			</option>
+			<option name="title_back_color" type="color">
+				<_short>Background Color</_short>
+				<_long>Background color for the window title</_long>
+				<default>
+					<red>0x0000</red>
+					<green>0x0000</green>
+					<blue>0x0000</blue>
+					<alpha>0x9999</alpha>
+				</default>
+			</option>
+			<option name="title_font_color" type="color">
+				<_short>Font Color</_short>
+				<_long>Font color for the window title</_long>
+				<default>
+					<red>0xffff</red>
+					<green>0xffff</green>
+					<blue>0xffff</blue>
+					<alpha>0xffff</alpha>
+				</default>
+			</option>
+			<option name="title_text_placement" type="int">
+				<_short>Text Placement</_short>
+				<_long>Selects where to place the window title.</_long>
+				<default>2</default>
+				<min>0</min>
+				<max>2</max>
+				<desc>
+					<value>0</value>
+					<_name>Centered on screen</_name>
+				</desc>
+				<desc>
+					<value>1</value>
+					<_name>Above</_name>
+				</desc>
+				<desc>
+					<value>2</value>
+					<_name>Below</_name>
+				</desc>
+			</option>
 	    </group>
 	</screen>
     </plugin>
