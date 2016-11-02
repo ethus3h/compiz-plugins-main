@@ -778,28 +778,6 @@ switchTerminate (CompDisplay     *d,
 
 	if (ss->grabIndex)
 	{
-		CompWindow                      *switcher, *zoomed;
-		Window	                        zoomedAbove = None;
-	    zoomed = ss->selectedWindow;
-	    if (zoomed && !zoomed->destroyed)
-	    {
-		CompWindow *w;
-
-		for (w = zoomed->prev; w && w->id <= 1; w = w->prev)
-		    ;
-		zoomedAbove = (w) ? w->id : None;
-
-		unhookWindowFromScreen (s, zoomed);
-		insertWindowIntoScreen (s, zoomed, s->reverseWindows->id);
-		addWindowDamage(w);
-	    }
-
-    	if (zoomed)
-    	{
-    	    unhookWindowFromScreen (s, zoomed);
-    	    insertWindowIntoScreen (s, zoomed, zoomedAbove);
-    	}
-
 	    removeScreenGrab (s, ss->grabIndex, 0);
 	    ss->grabIndex = 0;
 	    sendWindowActivationRequest (s, ss->selectedWindow->id);
@@ -815,6 +793,18 @@ switchTerminate (CompDisplay     *d,
 		    updateScreenGrab (s, ss->grabIndex, switchGetCursor (s, mouseSelect));
 
 	    ss->mouseSelect = mouseSelect;
+        
+        //Windows don't activate immediately, so wait up to a tenth of a second for it to get ready
+        struct timespec tim, tim2;
+        tim.tv_sec = 0;
+        tim.tv_nsec = 10000000L;
+        int waited;
+        waited = 0;
+        while ( (!ss->selectedWindow->id == (int) activeWindow) && (waited < 10) )
+        {
+            nanosleep (&tim, &tim2);
+            waited = waited+1;
+        }
 
 	    CompWindow *w;
 
