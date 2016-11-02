@@ -2172,6 +2172,17 @@ switchInitDisplay (CompPlugin  *p,
     SwitchDisplay *sd;
     int SwitchDisplayPrivateIndex;
 
+    sd = malloc (sizeof (SwitchDisplay));
+    if (!sd)
+	return FALSE;
+
+    sd->screenPrivateIndex = allocateScreenPrivateIndex (d);
+    if (sd->screenPrivateIndex < 0)
+    {
+	free (sd);
+	return FALSE;
+    }
+
     if (!checkPluginABI ("core", CORE_ABIVERSION))
 	return FALSE;
 
@@ -2185,17 +2196,6 @@ switchInitDisplay (CompPlugin  *p,
 	compLogMessage ("staticswitcher", CompLogLevelWarn,
 			"No compatible text plugin loaded.");
 	sd->textFunc = NULL;
-    }
-
-    sd = malloc (sizeof (SwitchDisplay));
-    if (!sd)
-	return FALSE;
-
-    sd->screenPrivateIndex = allocateScreenPrivateIndex (d);
-    if (sd->screenPrivateIndex < 0)
-    {
-	free (sd);
-	return FALSE;
     }
 
     staticswitcherSetNextButtonInitiate (d, switchNext);
