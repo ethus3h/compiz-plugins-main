@@ -1158,13 +1158,6 @@ staticswitcherRenderWindowTitle (CompScreen *s)
     if (!staticswitcherGetWindowTitle (s))
 	return;
 
-    if (staticswitcherGetMultioutputMode (s) == MultioutputModeOneBigSwitcher)
-    {
-	ox1 = oy1 = 0;
-	ox2 = s->width;
-	oy2 = s->height;
-    }
-    else
 	getCurrentOutputExtents (s, &ox1, &oy1, &ox2, &oy2);
 
     /* 75% of the output device as maximum width */
@@ -1193,7 +1186,7 @@ staticswitcherRenderWindowTitle (CompScreen *s)
 						      (ss->selectedWindow ?
 						       ss->selectedWindow->id :
 						       None),
-						      ss->type == ShiftTypeAll,
+						      FALSE,
 						      &tA);
 }
 
@@ -1209,19 +1202,10 @@ staticswitcherDrawWindowTitle (CompScreen *s)
     width = ss->textData->width;
     height = ss->textData->height;
 
-    if (staticswitcherGetMultioutputMode (s) == MultioutputModeOneBigSwitcher)
-    {
-	ox1 = oy1 = 0;
-	ox2 = s->width;
-	oy2 = s->height;
-    }
-    else
-    {
-        ox1 = s->outputDev[ss->usedOutput].region.extents.x1;
-        ox2 = s->outputDev[ss->usedOutput].region.extents.x2;
-        oy1 = s->outputDev[ss->usedOutput].region.extents.y1;
-        oy2 = s->outputDev[ss->usedOutput].region.extents.y2;
-    }
+    ox1 = s->outputDev[s->currentOutputDev].region.extents.x1;
+    ox2 = s->outputDev[s->currentOutputDev].region.extents.x2;
+    oy1 = s->outputDev[s->currentOutputDev].region.extents.y1;
+    oy2 = s->outputDev[s->currentOutputDev].region.extents.y2;
 
     float x = ox1 + ((ox2 - ox1) / 2) - ((int)ss->textData->width / 2);
     float y;
@@ -2186,6 +2170,7 @@ switchInitDisplay (CompPlugin  *p,
 		   CompDisplay *d)
 {
     SwitchDisplay *sd;
+    int index;
 
     if (!checkPluginABI ("core", CORE_ABIVERSION))
 	return FALSE;
