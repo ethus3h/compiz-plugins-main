@@ -732,7 +732,7 @@ switchInitiate (CompScreen            *s,
 		// {
 		//     switchShowHighlight (s);
 		// }
-	    // }
+	    }
 
 	    sd->lastActiveWindow = d->activeWindow;
 	    switchActivateEvent (s, TRUE);
