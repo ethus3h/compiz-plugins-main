@@ -718,20 +718,20 @@ switchInitiate (CompScreen            *s,
 		    switchShowPopup (s);
 		}
 
-		// delay = staticswitcherGetHighlightDelay (s) * 1000;
-		// if (delay)
-		// {
-		//     if (ss->highlightDelayHandle)
-		// 	compRemoveTimeout (ss->highlightDelayHandle);
-        // 
-		//     ss->highlightDelayHandle = compAddTimeout (delay,
-		// 					   (float) delay * 1.2,
-		// 					   switchShowHighlight, s);
-		// }
-		// else
-		// {
-		//     switchShowHighlight (s);
-		// }
+		delay = staticswitcherGetHighlightDelay (s) * 1000;
+		if (delay)
+		{
+		    if (ss->highlightDelayHandle)
+			compRemoveTimeout (ss->highlightDelayHandle);
+        
+		    ss->highlightDelayHandle = compAddTimeout (delay,
+							   (float) delay * 1.2,
+							   switchShowHighlight, s);
+		}
+		else
+		{
+		    switchShowHighlight (s);
+		}
 	    }
 
 	    sd->lastActiveWindow = d->activeWindow;
@@ -785,19 +785,19 @@ switchTerminate (CompDisplay     *d,
 
 	    CompWindow *w;
 
-	    // d->activeWindow = sd->lastActiveWindow;
-        // 
-	    // removeScreenGrab (s, ss->grabIndex, 0);
-	    // ss->grabIndex = 0;
-        // 
-	    // if (state && !(state & CompActionStateCancel))
-		// if (ss->selectedWindow && !ss->selectedWindow->destroyed)
-		//     sendWindowActivationRequest (s, ss->selectedWindow->id);
-        // 
-	    // ss->selectedWindow = NULL;
-        // 
-	    // switchActivateEvent (s, FALSE);
-	    // setSelectedWindowHint (s);
+	    d->activeWindow = sd->lastActiveWindow;
+        
+	    removeScreenGrab (s, ss->grabIndex, 0);
+	    ss->grabIndex = 0;
+        
+	    if (state && !(state & CompActionStateCancel))
+		if (ss->selectedWindow && !ss->selectedWindow->destroyed)
+		    sendWindowActivationRequest (s, ss->selectedWindow->id);
+        
+	    ss->selectedWindow = NULL;
+        
+	    switchActivateEvent (s, FALSE);
+	    setSelectedWindowHint (s);
 
 	    if (ss->popupDelayHandle)
 	    {
@@ -805,11 +805,11 @@ switchTerminate (CompDisplay     *d,
 		ss->popupDelayHandle = 0;
 	    }
 
-	    // if (ss->highlightDelayHandle)
-	    // {
-		// compRemoveTimeout (ss->highlightDelayHandle);
-		// ss->highlightDelayHandle = 0;
-	    // }
+	    if (ss->highlightDelayHandle)
+	    {
+		compRemoveTimeout (ss->highlightDelayHandle);
+		ss->highlightDelayHandle = 0;
+	    }
 
 	    if (ss->popupWindow)
 	    {
@@ -826,22 +826,6 @@ switchTerminate (CompDisplay     *d,
 	    }
 
 	    ss->switching = FALSE;
-
-//begin removed
-	    d->activeWindow = sd->lastActiveWindow;
-
-	    removeScreenGrab (s, ss->grabIndex, 0);
-	    ss->grabIndex = 0;
-
-	    if (state && !(state & CompActionStateCancel))
-	    if (ss->selectedWindow && !ss->selectedWindow->destroyed)
-		    sendWindowActivationRequest (s, ss->selectedWindow->id);
-
-	    ss->selectedWindow = NULL;
-
-	    switchActivateEvent (s, FALSE);
-	    setSelectedWindowHint (s);
-//end removed
 
 	    damageScreen (s);
 	}
@@ -1467,21 +1451,15 @@ switchPaintOutput (CompScreen		   *s,
 	    switcher->destroyed = TRUE;
 	}
 
-//begin alternate
-	if (!ss->popupDelayHandle)
+	Bool highlightDelayPassed;
+	if (staticswitcherGetHighlightDelayInherit (s))
+	    highlightDelayPassed = !ss->popupDelayHandle;
+	else
+	    highlightDelayPassed = !ss->highlightDelayHandle;
+	if (highlightDelayPassed)
 	    mode = staticswitcherGetHighlightMode (s);
 	else
 	    mode = HighlightModeNone;
-//end alternate
-	// Bool highlightDelayPassed;
-	// if (staticswitcherGetHighlightDelayInherit (s))
-	//     highlightDelayPassed = !ss->popupDelayHandle;
-	// else
-	//     highlightDelayPassed = !ss->highlightDelayHandle;
-	// if (highlightDelayPassed)
-	//     mode = staticswitcherGetHighlightMode (s);
-	// else
-	//     mode = HighlightModeNone;
 
 	// if (staticswitcherGetHighlightActivates (s))
 	// {
