@@ -785,19 +785,19 @@ switchTerminate (CompDisplay     *d,
 
 	    CompWindow *w;
 
-	    d->activeWindow = sd->lastActiveWindow;
-
-	    removeScreenGrab (s, ss->grabIndex, 0);
-	    ss->grabIndex = 0;
-
-	    if (state && !(state & CompActionStateCancel))
-		if (ss->selectedWindow && !ss->selectedWindow->destroyed)
-		    sendWindowActivationRequest (s, ss->selectedWindow->id);
-
-	    ss->selectedWindow = NULL;
-
-	    switchActivateEvent (s, FALSE);
-	    setSelectedWindowHint (s);
+	    // d->activeWindow = sd->lastActiveWindow;
+        // 
+	    // removeScreenGrab (s, ss->grabIndex, 0);
+	    // ss->grabIndex = 0;
+        // 
+	    // if (state && !(state & CompActionStateCancel))
+		// if (ss->selectedWindow && !ss->selectedWindow->destroyed)
+		//     sendWindowActivationRequest (s, ss->selectedWindow->id);
+        // 
+	    // ss->selectedWindow = NULL;
+        // 
+	    // switchActivateEvent (s, FALSE);
+	    // setSelectedWindowHint (s);
 
 	    if (ss->popupDelayHandle)
 	    {
@@ -805,11 +805,11 @@ switchTerminate (CompDisplay     *d,
 		ss->popupDelayHandle = 0;
 	    }
 
-	    if (ss->highlightDelayHandle)
-	    {
-		compRemoveTimeout (ss->highlightDelayHandle);
-		ss->highlightDelayHandle = 0;
-	    }
+	    // if (ss->highlightDelayHandle)
+	    // {
+		// compRemoveTimeout (ss->highlightDelayHandle);
+		// ss->highlightDelayHandle = 0;
+	    // }
 
 	    if (ss->popupWindow)
 	    {
@@ -826,6 +826,23 @@ switchTerminate (CompDisplay     *d,
 	    }
 
 	    ss->switching = FALSE;
+
+//begin removed
+	    d->activeWindow = sd->lastActiveWindow;
+
+	    removeScreenGrab (s, ss->grabIndex, 0);
+	    ss->grabIndex = 0;
+
+	    if (state && !(state & CompActionStateCancel))
+	    if (ss->selectedWindow && !ss->selectedWindow->destroyed)
+		    sendWindowActivationRequest (s, ss->selectedWindow->id);
+
+	    ss->selectedWindow = NULL;
+
+	    switchActivateEvent (s, FALSE);
+	    setSelectedWindowHint (s);
+//end removed
+
 	    damageScreen (s);
 	}
     }
@@ -1450,34 +1467,40 @@ switchPaintOutput (CompScreen		   *s,
 	    switcher->destroyed = TRUE;
 	}
 
-	Bool highlightDelayPassed;
-	if (staticswitcherGetHighlightDelayInherit (s))
-	    highlightDelayPassed = !ss->popupDelayHandle;
-	else
-	    highlightDelayPassed = !ss->highlightDelayHandle;
-	if (highlightDelayPassed)
+//begin alternate
+	if (!ss->popupDelayHandle)
 	    mode = staticswitcherGetHighlightMode (s);
 	else
 	    mode = HighlightModeNone;
+//end alternate
+	// Bool highlightDelayPassed;
+	// if (staticswitcherGetHighlightDelayInherit (s))
+	//     highlightDelayPassed = !ss->popupDelayHandle;
+	// else
+	//     highlightDelayPassed = !ss->highlightDelayHandle;
+	// if (highlightDelayPassed)
+	//     mode = staticswitcherGetHighlightMode (s);
+	// else
+	//     mode = HighlightModeNone;
 
-	if (staticswitcherGetHighlightActivates (s))
-	{
-	    removeScreenGrab (s, ss->grabIndex, 0);
-	    ss->grabIndex = 0;
-	    sendWindowActivationRequest (s, ss->selectedWindow->id);
-	    damageScreen (s);
-	    Bool mouseSelect;
-	    mouseSelect = staticswitcherGetMouseSelect (s) &&
-						ss->selection != Panels;
-
-	    if (!ss->grabIndex)
-		    ss->grabIndex = pushScreenGrab (s, switchGetCursor (s, mouseSelect),
-						"switcher");
-	    else if (mouseSelect != ss->mouseSelect)
-		    updateScreenGrab (s, ss->grabIndex, switchGetCursor (s, mouseSelect));
-
-	    ss->mouseSelect = mouseSelect;
-	}
+	// if (staticswitcherGetHighlightActivates (s))
+	// {
+	//     removeScreenGrab (s, ss->grabIndex, 0);
+	//     ss->grabIndex = 0;
+	//     sendWindowActivationRequest (s, ss->selectedWindow->id);
+	//     damageScreen (s);
+	//     Bool mouseSelect;
+	//     mouseSelect = staticswitcherGetMouseSelect (s) &&
+	// 					ss->selection != Panels;
+    // 
+	//     if (!ss->grabIndex)
+	// 	    ss->grabIndex = pushScreenGrab (s, switchGetCursor (s, mouseSelect),
+	// 					"switcher");
+	//     else if (mouseSelect != ss->mouseSelect)
+	// 	    updateScreenGrab (s, ss->grabIndex, switchGetCursor (s, mouseSelect));
+    // 
+	//     ss->mouseSelect = mouseSelect;
+	// }
 
 	if (mode == HighlightModeBringSelectedToFront)
 	{
