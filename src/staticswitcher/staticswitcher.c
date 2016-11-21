@@ -718,21 +718,21 @@ switchInitiate (CompScreen            *s,
 		    switchShowPopup (s);
 		}
 
-		delay = staticswitcherGetHighlightDelay (s) * 1000;
-		if (delay)
-		{
-		    if (ss->highlightDelayHandle)
-			compRemoveTimeout (ss->highlightDelayHandle);
-
-		    ss->highlightDelayHandle = compAddTimeout (delay,
-							   (float) delay * 1.2,
-							   switchShowHighlight, s);
-		}
-		else
-		{
-		    switchShowHighlight (s);
-		}
-	    }
+		// delay = staticswitcherGetHighlightDelay (s) * 1000;
+		// if (delay)
+		// {
+		//     if (ss->highlightDelayHandle)
+		// 	compRemoveTimeout (ss->highlightDelayHandle);
+        // 
+		//     ss->highlightDelayHandle = compAddTimeout (delay,
+		// 					   (float) delay * 1.2,
+		// 					   switchShowHighlight, s);
+		// }
+		// else
+		// {
+		//     switchShowHighlight (s);
+		// }
+	    // }
 
 	    sd->lastActiveWindow = d->activeWindow;
 	    switchActivateEvent (s, TRUE);
