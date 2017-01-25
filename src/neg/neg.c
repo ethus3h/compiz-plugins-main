@@ -770,6 +770,8 @@ NEGInitWindow (CompPlugin *p,
 
     w->base.privates[ns->windowPrivateIndex].ptr = nw;
 
+    NEGToggle (w);
+
     return TRUE;
 }
 
