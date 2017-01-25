@@ -570,28 +570,24 @@ NEGScreenOptionChanged (CompScreen       *s,
 
 	    for (w = s->windows; w; w = w->next)
 	    {
-		Bool m; // Matches negative
 		Bool e; // Matches exclude
+		Bool m; // Matches negative
 		Bool f; // Screen toggled
-		Bool t; // Window toggled
+
+		Bool a; // Window is automatically toggled
+		Bool t; // Window is manually toggled
+
 		NEG_WINDOW (w);
 
-		m = matchEval (negGetNegMatch (s), w);
 		e = matchEval (negGetExcludeMatch (s), w);
+		m = matchEval (negGetNegMatch (s), w);
 		f = ns->isNeg;
 		t = nw->isNeg;
 
+		a = ( !e && (m != f) );
+
 		// Look at the current state and decide whether to negate the window
-		if (
-			(t && !(m || e || f)) ||
-			(f && !(m || e || t)) ||
-			(m && !(f || e || t)) ||
-			(e && t && !(m || f)) ||
-			(m && f && t && !(e)) ||
-			(m && e && t && !(f)) ||
-			(m && e && f && t)
-		   )
-		{
+		if ( a != t ) {
 		    NEGToggle (w);
 		}
 	    }
@@ -720,7 +716,7 @@ NEGInitScreen (CompPlugin *p,
     /* initialize the screen variables
      * you know what happens if you don't
      */
-    ns->isNeg = FALSE;
+    ns->isNeg = TRUE;
 
     ns->negFunction      = 0;
     ns->negAlphaFunction = 0;
