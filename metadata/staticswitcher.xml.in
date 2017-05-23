@@ -99,6 +99,10 @@
 		    <_short>Prev Panel</_short>
 		    <_long>Select previous panel type window.</_long>
 		</option>
+		<option name="close_highlighted_key" type="key">
+		    <_short>Close highlighted</_short>
+		    <_long>Closes the currently highlighted window. If the switcher is not in use, closes the currently active window instead.</_long>
+		</option>
 	    </group>
 	</display>
 	<screen>
@@ -126,8 +130,8 @@
 		    <default>Normal | Dialog | Toolbar | Utility | Unknown</default>
 		</option>
 		<option name="minimized" type="bool">
-		    <_short>Show Minimized</_short>
-		    <_long>Show minimized windows</_long>
+		    <_short>Include Minimized</_short>
+		    <_long>Include minimized windows</_long>
 		    <default>true</default>
 		</option>
 		<option name="auto_change_vp" type="bool">
@@ -143,9 +147,32 @@
 		    <max>2.0</max>
 		    <precision>0.05</precision>
 		</option>
+		<option name="highlight_delay" type="float">
+		    <_short>Window Highlight Delay</_short>
+		    <_long>Time (in s) the to wait before highlighting the current window</_long>
+		    <default>0.0</default>
+		    <min>0.0</min>
+		    <max>2.0</max>
+		    <precision>0.05</precision>
+		</option>
+		<option name="draw_popup" type="bool">
+		    <_short>Draw Popup</_short>
+		    <_long>Whether to draw the popup window</_long>
+		    <default>true</default>
+		</option>
+		<option name="highlight_delay_inherit" type="bool">
+		    <_short>Inherit Highlight Delay</_short>
+		    <_long>When enabled, use the popup delay for the window highlight</_long>
+		    <default>true</default>
+		</option>
 		<option name="mouse_select" type="bool">
 		    <_short>Allow Mouse Selection</_short>
 		    <_long>Allow selection of windows from the switcher window with the mouse</_long>
+		    <default>false</default>
+		</option>
+		<option name="mouse_close" type="bool">
+		    <_short>Allow Mouse Close</_short>
+		    <_long>Close window on clicking its preview in the popup with the middle button</_long>
 		    <default>false</default>
 		</option>
 	    </group>
@@ -200,6 +227,24 @@
 			<value>2</value>
 			<_name>Right</_name>
 		    </desc>
+		</option>
+		<option name="popup_preview_size" type="int">
+		    <_short>Popup Preview Size</_short>
+		    <_long>Size of the previews in the popup</_long>
+		    <default>150</default>
+		    <min>0</min>
+		</option>
+		<option name="popup_border_size" type="int">
+		    <_short>Popup Border Size</_short>
+		    <_long>Size of the border of the popup</_long>
+		    <default>10</default>
+		    <min>0</min>
+		</option>
+		<option name="popup_icon_size" type="int">
+		    <_short>Icon Size</_short>
+		    <_long>Size of the icon overlays</_long>
+		    <default>48</default>
+		    <min>0</min>
 		</option>
 		<subgroup>
 		    <_short>Selected Window Highlight</_short>
