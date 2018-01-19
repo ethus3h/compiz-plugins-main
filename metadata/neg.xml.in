@@ -22,6 +22,11 @@
 			</option>
 		</display>
 		<screen>
+			<option name="default_negative" type="bool">
+				<_short>Negative by default</_short>
+				<_long>Default screen state is negative</_long>
+				<default>false</default>
+			</option>
 			<option name="toggle_by_default" type="bool">
 				<_short>Auto-Toggle Matched Windows</_short>
 				<_long>Automatically toggle windows in the match list by default</_long>

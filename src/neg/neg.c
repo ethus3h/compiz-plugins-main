@@ -567,6 +567,11 @@ NEGScreenOptionChanged (CompScreen       *s,
 {
     switch (num)
     {
+    case NegScreenOptionDefaultNegative:
+    {
+		NEGToggleScreen (s);
+    }
+    break;
     case NegScreenOptionToggleByDefault:
     {
 		CompWindow *w;
@@ -740,6 +745,7 @@ NEGInitScreen (CompPlugin *p,
     ns->negFunction      = 0;
     ns->negAlphaFunction = 0;
 
+    negSetDefaultNegativeNotify (s, NEGScreenOptionChanged);
     negSetToggleByDefaultNotify (s, NEGScreenOptionChanged);
     negSetNegMatchNotify (s, NEGScreenOptionChanged);
 
@@ -858,4 +864,3 @@ getCompPluginInfo(void)
 {
     return &NEGVTable;
 }
-
