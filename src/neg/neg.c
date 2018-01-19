@@ -864,3 +864,4 @@ getCompPluginInfo(void)
 {
     return &NEGVTable;
 }
+
