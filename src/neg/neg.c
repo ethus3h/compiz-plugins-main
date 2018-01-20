@@ -884,7 +884,7 @@ NEGInitScreen (CompPlugin *p,
     /* initialize the screen variables
      * you know what happens if you don't
      */
-    ns->isNeg           = FALSE; /* This must be kept in sync with default
+    ns->isNeg           = TRUE;  /* This must be kept in sync with default
                                     toggle_screen_by_default value from
                                     neg.xml.in. */
     ns->keyNegToggled   = FALSE;
